@@ -11,22 +11,23 @@ public class Book {
     private String title;
     private String author;
     private String description;
-    private String bookImageUrl;
-    private String amazonUrl;
-    private String primaryIsbn;
+    private String bookImageUrl; // URL to the book cover image
+    private String amazonUrl; // Link to Amazon product
+    private String primaryIsbn10; // Primary ISBN-10
+    private String primaryIsbn13; // Primary ISBN-13
     private String publisher;
     private int rank;
     private int weeksOnList;
 
-    // Constructor, Getters only
-
-    public Book(String title, String author, String description, String bookImageUrl, String amazonUrl, String primaryIsbn, String publisher, int rank, int weeksOnList) {
+    // Constructor
+    public Book(String title, String author, String description, String bookImageUrl, String amazonUrl, String primaryIsbn10, String primaryIsbn13, String publisher, int rank, int weeksOnList) {
         this.title = title;
         this.author = author;
         this.description = description;
         this.bookImageUrl = bookImageUrl;
         this.amazonUrl = amazonUrl;
-        this.primaryIsbn = primaryIsbn;
+        this.primaryIsbn10 = primaryIsbn10;
+        this.primaryIsbn13 = primaryIsbn13;
         this.publisher = publisher;
         this.rank = rank;
         this.weeksOnList = weeksOnList;
@@ -57,8 +58,12 @@ public class Book {
         return amazonUrl;
     }
 
-    public String getPrimaryIsbn() {
-        return primaryIsbn;
+    public String getPrimaryIsbn10() {
+        return primaryIsbn10;
+    }
+
+    public String getPrimaryIsbn13() {
+        return primaryIsbn13;
     }
 
     public String getPublisher() {
@@ -71,5 +76,50 @@ public class Book {
 
     public int getWeeksOnList() {
         return weeksOnList;
+    }
+
+    // Setters
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setBookImageUrl(String bookImageUrl) {
+        this.bookImageUrl = bookImageUrl;
+    }
+
+    public void setAmazonUrl(String amazonUrl) {
+        this.amazonUrl = amazonUrl;
+    }
+
+    public void setPrimaryIsbn10(String primaryIsbn10) {
+        this.primaryIsbn10 = primaryIsbn10;
+    }
+
+    public void setPrimaryIsbn13(String primaryIsbn13) {
+        this.primaryIsbn13 = primaryIsbn13;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public void setWeeksOnList(int weeksOnList) {
+        this.weeksOnList = weeksOnList;
     }
 }
