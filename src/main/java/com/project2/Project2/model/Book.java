@@ -11,10 +11,10 @@ public class Book {
     private String title;
     private String author;
     private String description;
-    private String bookImageUrl; // URL to the book cover image
-    private String amazonUrl; // Link to Amazon product
-    private String primaryIsbn10; // Primary ISBN-10
-    private String primaryIsbn13; // Primary ISBN-13
+    private String bookImageUrl;
+    private String amazonUrl;
+    private String primaryIsbn10;
+    private String primaryIsbn13;
     private String publisher;
     private int rank;
     private int weeksOnList;
