@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books") // Combining the paths into "/api/books"
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
+    // CRUD operations from API branch
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
@@ -44,6 +45,12 @@ public class BookController {
         boolean deleted = bookService.deleteBook(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
-}
 
+    // Populate endpoint from main branch
+    @GetMapping("/populate") // This maps to "/api/books/populate"
+    public String populateBooks() {
+        bookService.populateBooks();
+        return "Books data has been populated in MongoDB!";
+    }
+}
 

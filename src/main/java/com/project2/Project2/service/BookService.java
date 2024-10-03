@@ -1,12 +1,11 @@
-package com.project2.Project2.service;
+package com.project2.Project2.service;  // This is the package declaration
 
-import com.project2.Project2.model.Book;
-import com.project2.Project2.repository.BookRepository;
-import com.project2.Project2.model.NYTBookResponse;
-import com.project2.Project2.model.NYTBookAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,24 +19,31 @@ public class BookService {
     @Autowired
     private RestTemplate restTemplate; // For making API calls
 
+    @Value("${nyt.api.key}")
+    private String NYT_API_KEY; // Inject API key from properties
+
     // Fetch and save books from the NYT API
     public void fetchAndSaveBooks() {
-        String apiUrl = "https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=VuEOhETDThDTa2VB1MvEsLgwTmNMJkeh";
-        NYTBookResponse response = restTemplate.getForObject(apiUrl, NYTBookResponse.class);
+        String apiUrl = "https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=" + NYT_API_KEY;
+        String result = restTemplate.getForObject(apiUrl, String.class);
+        
+        if (result != null) {
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray booksArray = jsonObject.getJSONObject("results").getJSONArray("books");
 
-        if (response != null && response.getResults() != null && response.getResults().getBooks() != null) {
-            for (NYTBookAPI bookAPI : response.getResults().getBooks()) {
+            for (int i = 0; i < booksArray.length(); i++) {
+                JSONObject bookJson = booksArray.getJSONObject(i);
                 Book book = new Book(
-                        bookAPI.getTitle(),
-                        bookAPI.getAuthor(),
-                        bookAPI.getDescription(),
-                        bookAPI.getBookImage(),
-                        bookAPI.getAmazonProductUrl(),
-                        bookAPI.getPrimaryIsbn10(),
-                        bookAPI.getPrimaryIsbn13(),
-                        bookAPI.getPublisher(),
-                        bookAPI.getRank(),
-                        bookAPI.getWeeksOnList()
+                        bookJson.getString("title"),
+                        bookJson.getString("author"),
+                        bookJson.getString("description"),
+                        bookJson.getString("book_image"),
+                        bookJson.getString("amazon_product_url"),
+                        bookJson.getString("primary_isbn10"),
+                        bookJson.getString("primary_isbn13"),
+                        bookJson.getString("publisher"),
+                        bookJson.getInt("rank"),
+                        bookJson.getInt("weeks_on_list")
                 );
                 bookRepository.save(book);
             }
@@ -80,5 +86,3 @@ public class BookService {
         return false;
     }
 }
-
-
