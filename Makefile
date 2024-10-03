@@ -27,10 +27,8 @@ push:
 release:
 	echo "Releasing Docker image on Heroku..."
 	heroku container:release web --app $(HEROKU_APP_NAME)
-	echo "Restarting the Heroku app..."
-	heroku ps:restart --app $(HEROKU_APP_NAME)
-	echo "Checking Heroku logs..."
-	heroku logs --tail --app $(HEROKU_APP_NAME)
+#	echo "Checking Heroku logs..."
+#	heroku logs --tail --app $(HEROKU_APP_NAME)
 
 # Open the Heroku app
 open:
