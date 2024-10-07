@@ -1,7 +1,7 @@
 package com.project2.Project2.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.project2.Project2.model.User;
 import com.project2.Project2.repository.UserRepository;
@@ -15,7 +15,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     public Optional<User> findUserByUsername(String username) {
         return userRepository.findByUsername(username);
