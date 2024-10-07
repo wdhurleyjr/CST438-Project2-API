@@ -1,8 +1,6 @@
-# Makefile for building and deploying the Docker image
-
 # Variables
 IMAGE_NAME = project2
-IMAGE_TAG = $(shell date +%Y%m%d%H%M%S)  # Use a timestamp as the tag
+IMAGE_TAG = $(shell date +%Y%m%d%H%M%S)  # Timestamp generated once
 HEROKU_APP_NAME = cst438-project2
 HEROKU_REGISTRY = registry.heroku.com/$(HEROKU_APP_NAME)/web
 
@@ -28,8 +26,6 @@ push:
 release:
 	echo "Releasing Docker image on Heroku..."
 	heroku container:release web --app $(HEROKU_APP_NAME)
-#	echo "Checking Heroku logs..."
-#	heroku logs --tail --app $(HEROKU_APP_NAME)
 
 # Open the Heroku app
 open:
