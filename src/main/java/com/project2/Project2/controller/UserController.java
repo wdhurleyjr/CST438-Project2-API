@@ -4,6 +4,7 @@ import com.project2.Project2.model.User;
 import com.project2.Project2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,12 +66,14 @@ public class UserController {
         return wishlist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/roles")
     public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody String roles) {
         Optional<User> updatedUser = userService.assignRole(id, roles);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}/roles")
     public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody String roles) {
         Optional<User> updatedUser = userService.removeRole(id, roles);
@@ -83,4 +86,5 @@ public class UserController {
         return roles.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
+
 
