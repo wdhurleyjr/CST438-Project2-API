@@ -72,4 +72,25 @@ public class UserService {
     public void deleteUser(User user) {
         userRepository.delete(user);
     }
+
+    // New method to add a book to the user's wishlist
+    public Optional<User> addBookToWishlist(String userId, String bookId) {
+        return userRepository.findById(userId).map(user -> {
+            user.addToWishlist(bookId);  // Add the bookId to the wishlist
+            return userRepository.save(user);
+        });
+    }
+
+    // New method to remove a book from the user's wishlist
+    public Optional<User> removeBookFromWishlist(String userId, String bookId) {
+        return userRepository.findById(userId).map(user -> {
+            user.removeFromWishlist(bookId);  // Remove the bookId from the wishlist
+            return userRepository.save(user);
+        });
+    }
+
+    // New method to get the user's wishlist
+    public Optional<List<String>> getUserWishlist(String userId) {
+        return userRepository.findById(userId).map(User::getWishlist);
+    }
 }
