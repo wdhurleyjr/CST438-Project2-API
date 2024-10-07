@@ -66,13 +66,13 @@ public class UserController {
     }
 
     @PutMapping("/{id}/roles")
-    public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody Set<String> roles) {
+    public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody String roles) {
         Optional<User> updatedUser = userService.assignRole(id, roles);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}/roles")
-    public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody Set<String> roles) {
+    public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody String roles) {
         Optional<User> updatedUser = userService.removeRole(id, roles);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
