@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
 import java.util.List;
+import java.util.Set;
 
 @Document(collection = "users")
 public class User {
@@ -25,16 +26,19 @@ public class User {
 
     private List<String> wishlist;
 
+    private Set<String> roles;
+
     // Constructors
     public User() {
     }
 
-    public User(String username, String password, String email, String firstName, String lastName) {
+    public User(String username, String password, String email, String firstName, String lastName, Set<String> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.roles = roles;
     }
 
     // Getters and Setters
@@ -101,5 +105,14 @@ public class User {
     public void removeFromWishlist(String bookId) {
         this.wishlist.remove(bookId);
     }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
 }
+
 
