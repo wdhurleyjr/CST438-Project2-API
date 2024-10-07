@@ -1,6 +1,6 @@
 # Variables
 IMAGE_NAME = project2
-IMAGE_TAG = $(shell date +%Y%m%d%H%M%S)  # Timestamp generated once
+IMAGE_TAG := $(shell date +%Y%m%d%H%M%S)  # Timestamp generated once
 HEROKU_APP_NAME = cst438-project2
 HEROKU_REGISTRY = registry.heroku.com/$(HEROKU_APP_NAME)/web
 
