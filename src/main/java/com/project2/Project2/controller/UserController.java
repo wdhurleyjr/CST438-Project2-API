@@ -49,4 +49,25 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // Add a book to the user's wishlist
+    @PostMapping("/{id}/wishlist/{bookId}")
+    public ResponseEntity<User> addBookToWishlist(@PathVariable String id, @PathVariable String bookId) {
+        Optional<User> updatedUser = userService.addBookToWishlist(id, bookId);
+        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Remove a book from the user's wishlist
+    @DeleteMapping("/{id}/wishlist/{bookId}")
+    public ResponseEntity<User> removeBookFromWishlist(@PathVariable String id, @PathVariable String bookId) {
+        Optional<User> updatedUser = userService.removeBookFromWishlist(id, bookId);
+        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Get the user's wishlist
+    @GetMapping("/{id}/wishlist")
+    public ResponseEntity<List<String>> getUserWishlist(@PathVariable String id) {
+        Optional<List<String>> wishlist = userService.getUserWishlist(id);
+        return wishlist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

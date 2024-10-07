@@ -3,6 +3,7 @@ package com.project2.Project2.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
+import java.util.List;
 
 @Document(collection = "users")
 public class User {
@@ -21,6 +22,8 @@ public class User {
     private String firstName;
 
     private String lastName;
+
+    private List<String> wishlist;
 
     // Constructors
     public User() {
@@ -82,4 +85,21 @@ public class User {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public List<String> getWishlist() {
+        return wishlist;
+    }
+
+    public void setWishlist(List<String> wishlist) {
+        this.wishlist = wishlist;
+    }
+
+    public void addToWishlist(String bookId) {
+        this.wishlist.add(bookId);
+    }
+
+    public void removeFromWishlist(String bookId) {
+        this.wishlist.remove(bookId);
+    }
 }
+
