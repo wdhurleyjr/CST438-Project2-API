@@ -1,4 +1,4 @@
-*Project 2
+## Project 2
 
 ## Entity-Relationship Diagrams (ERDs) for the Application
 
