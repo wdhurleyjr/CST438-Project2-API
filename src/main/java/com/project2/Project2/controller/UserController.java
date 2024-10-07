@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,31 +44,43 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable String id) {
         boolean deleted = userService.deleteUserById(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    // Add a book to the user's wishlist
     @PostMapping("/{id}/wishlist/{bookId}")
     public ResponseEntity<User> addBookToWishlist(@PathVariable String id, @PathVariable String bookId) {
         Optional<User> updatedUser = userService.addBookToWishlist(id, bookId);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Remove a book from the user's wishlist
     @DeleteMapping("/{id}/wishlist/{bookId}")
     public ResponseEntity<User> removeBookFromWishlist(@PathVariable String id, @PathVariable String bookId) {
         Optional<User> updatedUser = userService.removeBookFromWishlist(id, bookId);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Get the user's wishlist
     @GetMapping("/{id}/wishlist")
     public ResponseEntity<List<String>> getUserWishlist(@PathVariable String id) {
         Optional<List<String>> wishlist = userService.getUserWishlist(id);
         return wishlist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}/roles")
+    public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody Set<String> roles) {
+        Optional<User> updatedUser = userService.assignRole(id, roles);
+        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}/roles")
+    public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody Set<String> roles) {
+        Optional<User> updatedUser = userService.removeRole(id, roles);
+        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<Set<String>> getUserRoles(@PathVariable String id) {
+        Optional<Set<String>> roles = userService.getUserRoles(id);
+        return roles.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
+
