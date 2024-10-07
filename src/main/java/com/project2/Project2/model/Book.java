@@ -5,13 +5,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "books")
 public class Book {
+
     @Id
     private String id;
     private String title;
     private String author;
     private String isbn;
-    private String description;
-    private String listName;
+
+    // Default constructor
+    public Book() {}
+
+    // Parameterized constructor
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
 
     // Getters and Setters
     public String getId() {
@@ -44,21 +53,5 @@ public class Book {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getListName() {
-        return listName;
-    }
-
-    public void setListName(String listName) {
-        this.listName = listName;
     }
 }
