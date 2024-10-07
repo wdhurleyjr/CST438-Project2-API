@@ -1,10 +1,10 @@
 package com.project2.Project2.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.project2.Project2.model.User;
 import com.project2.Project2.repository.UserRepository;
-import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.util.*;
 
@@ -13,6 +13,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Optional<User> findUserByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -31,8 +34,11 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+        // Hash the password using BCryptPasswordEncoder
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
+
+        // Set default role if not present
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(new HashSet<>(Collections.singletonList("USER")));
         }
@@ -42,8 +48,9 @@ public class UserService {
 
     public Optional<User> updateUser(String id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
+            // Hash the updated password, if present
             if (updatedUser.getPassword() != null) {
-                String hashedPassword = BCrypt.withDefaults().hashToString(12, updatedUser.getPassword().toCharArray());
+                String hashedPassword = passwordEncoder.encode(updatedUser.getPassword());
                 user.setPassword(hashedPassword);
             }
             user.setUsername(updatedUser.getUsername());
@@ -102,3 +109,4 @@ public class UserService {
         return userRepository.findById(userId).map(User::getRoles);
     }
 }
+
