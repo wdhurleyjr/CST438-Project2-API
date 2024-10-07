@@ -1,10 +1,12 @@
 version: '3'
 services:
   app:
-    image: project2:${IMAGE_TAG}  # Use the dynamic timestamp image tag
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        IMAGE_TAG: ${IMAGE_TAG}  # Pass the IMAGE_TAG as a build argument
+    image: project2:${IMAGE_TAG}  # Use the dynamic timestamp image tag
     environment:
       - PORT=8080  # Specify the port explicitly
       - MONGODB_URI=mongodb+srv://pemitchell:TThycxG6X78dXSH0@nytbooksdb.5ugif.mongodb.net/BooksDatabase?retryWrites=true&w=majority&appName=NYTBooksDB
@@ -17,4 +19,5 @@ services:
 
 networks:
   app-network:
+
 
