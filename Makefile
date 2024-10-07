@@ -2,21 +2,22 @@
 
 # Variables
 IMAGE_NAME = project2
+IMAGE_TAG = $(shell date +%Y%m%d%H%M%S)  # Use a timestamp as the tag
 HEROKU_APP_NAME = cst438-project2
 HEROKU_REGISTRY = registry.heroku.com/$(HEROKU_APP_NAME)/web
 
 # Default target
 all: build tag push release open
 
-# Build the Docker image (force no cache to ensure fresh image)
+# Build the Docker image
 build:
-	echo "Building Docker image for $(IMAGE_NAME)..."
-	docker build --no-cache --platform linux/amd64 -t $(IMAGE_NAME) .
+	echo "Building Docker image for $(IMAGE_NAME):$(IMAGE_TAG)..."
+	docker build --platform linux/amd64 -t $(IMAGE_NAME):$(IMAGE_TAG) .
 
 # Tag the Docker image
 tag:
 	echo "Tagging Docker image..."
-	docker tag $(IMAGE_NAME) $(HEROKU_REGISTRY)
+	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(HEROKU_REGISTRY)
 
 # Push the Docker image to Heroku
 push:

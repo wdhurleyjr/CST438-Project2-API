@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: project2
+    image: project2:${IMAGE_TAG}  # Use the dynamic timestamp image tag
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,3 +17,4 @@ services:
 
 networks:
   app-network:
+
