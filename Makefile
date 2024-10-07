@@ -7,10 +7,13 @@ HEROKU_REGISTRY = registry.heroku.com/$(HEROKU_APP_NAME)/web
 # Default target
 all: build tag push release open
 
-# Build the Docker image
+# Build the Docker image (includes Maven build)
 build:
+	echo "Building Maven package..."
+	mvn clean package -Dmaven.test.skip=true  # Add Maven build step
 	echo "Building Docker image for $(IMAGE_NAME):$(IMAGE_TAG)..."
-	docker build --platform linux/amd64 -t $(IMAGE_NAME):$(IMAGE_TAG) .
+	docker build --no-cache --platform linux/amd64 -t $(IMAGE_NAME):$(IMAGE_TAG) .
+
 
 # Tag the Docker image
 tag:
