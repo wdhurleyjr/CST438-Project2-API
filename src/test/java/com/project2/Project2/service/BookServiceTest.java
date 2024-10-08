@@ -127,4 +127,19 @@ class BookServiceTest {
         bookService.populateBooks();
         verify(bookRepository, times(1)).saveAll(anyList());
     }
+
+    // Amazon URL Generation Tests
+    @Test
+    void generateAmazonUrlsForAllBooks_ShouldUpdateAmazonUrlsForBooks() {
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "");
+        Book book2 = new Book("Educated", "Tara Westover", "9780399590504", "A memoir about growing up in a strict household.", "Biography", "https://image3.jpg", "");
+        when(bookRepository.findAll()).thenReturn(Arrays.asList(book1, book2));
+
+        bookService.generateAmazonUrlsForAllBooks();
+
+        assertEquals("https://www.amazon.com/dp/9781638931249", book1.getAmazonUrl());
+        assertEquals("https://www.amazon.com/dp/9780399590504", book2.getAmazonUrl());
+        verify(bookRepository, times(1)).findAll();
+        verify(bookRepository, times(1)).saveAll(anyList());
+    }
 }
