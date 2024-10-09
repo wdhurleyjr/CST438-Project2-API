@@ -32,9 +32,13 @@ public class BookController {
     public List<Book> searchBooks(@RequestParam(value = "title", required = false) String title,
                                   @RequestParam(value = "author", required = false) String author,
                                   @RequestParam(value = "isbn", required = false) String isbn) {
-        System.out.println("Search Request Received: title=" + title + ", author=" + author + ", isbn=" + isbn);
-        List<Book> results = bookService.searchBooks(title, author, isbn);
-        System.out.println("Search Results: " + results.size() + " books found");
-        return results;
+        return bookService.searchBooks(title, author, isbn);
+    }
+
+    // Generate Amazon URLs Endpoint
+    @GetMapping("/generate-amazon-urls")
+    public String generateAmazonUrls() {
+        bookService.generateAmazonUrlsForAllBooks();
+        return "Amazon URLs have been generated for all books!";
     }
 }
