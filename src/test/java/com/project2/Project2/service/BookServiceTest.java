@@ -31,7 +31,7 @@ class BookServiceTest {
     // Search Functionality Tests
     @Test
     void searchBooks_ShouldReturnBooks_WhenTitleMatches() {
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com");
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com", "2021-01-01", 4.5, "Thriller");
         when(bookRepository.findByTitleContainingIgnoreCase("The Butcher Game")).thenReturn(Arrays.asList(book1));
 
         List<Book> results = bookService.searchBooks("The Butcher Game", null, null);
@@ -43,7 +43,7 @@ class BookServiceTest {
 
     @Test
     void searchBooks_ShouldReturnBooks_WhenAuthorMatches() {
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com");
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com", "2021-01-01", 4.5, "Thriller");
         when(bookRepository.findByAuthorContainingIgnoreCase("Alaina Urquhart")).thenReturn(Arrays.asList(book1));
 
         List<Book> results = bookService.searchBooks(null, "Alaina Urquhart", null);
@@ -55,7 +55,7 @@ class BookServiceTest {
 
     @Test
     void searchBooks_ShouldReturnBooks_WhenIsbnMatches() {
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com");
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com", "2021-01-01", 4.5, "Thriller");
         when(bookRepository.findByIsbnContainingIgnoreCase("9781638931249")).thenReturn(Arrays.asList(book1));
 
         List<Book> results = bookService.searchBooks(null, null, "9781638931249");
@@ -67,7 +67,7 @@ class BookServiceTest {
 
     @Test
     void searchBooks_ShouldReturnBooks_WhenTitleAndAuthorMatch() {
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com");
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com", "2021-01-01", 4.5, "Thriller");
         when(bookRepository.findByTitleContainingAndAuthorContainingAllIgnoreCase("The Butcher Game", "Alaina Urquhart"))
                 .thenReturn(Arrays.asList(book1));
 
@@ -111,7 +111,7 @@ class BookServiceTest {
 
     @Test
     void searchBooks_ShouldHandleCaseInsensitivity() {
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com");
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "https://amazon1.com", "2021-01-01", 4.5, "Thriller");
         when(bookRepository.findByTitleContainingIgnoreCase("the butcher game")).thenReturn(Arrays.asList(book1));
 
         List<Book> results = bookService.searchBooks("the butcher game", null, null);
@@ -131,8 +131,8 @@ class BookServiceTest {
     // Amazon URL Generation Tests
     @Test
     void generateAmazonUrlsForAllBooks_ShouldUpdateAmazonUrlsForBooks() {
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "");
-        Book book2 = new Book("Educated", "Tara Westover", "9780399590504", "A memoir about growing up in a strict household.", "Biography", "https://image3.jpg", "");
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "Description 1", "Hardcover Fiction", "https://image1.jpg", "", "2021-01-01", 4.5, "Thriller");
+        Book book2 = new Book("Educated", "Tara Westover", "9780399590504", "A memoir about growing up in a strict household.", "Biography", "https://image3.jpg", "", "2018-02-20", 4.7, "Biography");
         when(bookRepository.findAll()).thenReturn(Arrays.asList(book1, book2));
 
         bookService.generateAmazonUrlsForAllBooks();
@@ -143,5 +143,3 @@ class BookServiceTest {
         verify(bookRepository, times(1)).saveAll(anyList());
     }
 }
-
-//To Do: Implement Test Cases for Update Image URL Functionality

@@ -48,4 +48,10 @@ public class BookController {
         bookService.updateBookImages();
         return "Book images have been updated for all books!";
     }
+
+    // New Endpoint: Get Book Metadata (Publication Date, Rating, Genre)
+    @GetMapping("/metadata")
+    public String getBookMetadata() {
+        return "Book metadata fields (Publication Date, Rating, Genre) have been added to the model!";
+    }
 }
