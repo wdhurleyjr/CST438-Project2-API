@@ -41,4 +41,11 @@ public class BookController {
         bookService.generateAmazonUrlsForAllBooks();
         return "Amazon URLs have been generated for all books!";
     }
+
+    // Update Image URLs Endpoint
+    @GetMapping("/update-images")
+    public String updateBookImages() {
+        bookService.updateBookImages();
+        return "Book images have been updated for all books!";
+    }
 }
