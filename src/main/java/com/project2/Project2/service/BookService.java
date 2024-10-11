@@ -28,10 +28,18 @@ public class BookService {
      * Populate MongoDB collection with dummy book data.
      */
     public void populateBooks() {
-        // Creating dummy books for population
-        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", "A thrilling novel of crime and suspense.", "Hardcover Fiction", "https://image1.jpg", "");
-        Book book2 = new Book("The Science of Interstellar", "Kip Thorne", "9780393351378", "Exploring the science behind the movie Interstellar.", "Science", "https://image2.jpg", "");
-        Book book3 = new Book("Educated", "Tara Westover", "9780399590504", "A memoir by Tara Westover about growing up in a strict and abusive household.", "Biography", "https://image3.jpg", "");
+        // Creating dummy books for population with new fields
+        Book book1 = new Book("The Butcher Game", "Alaina Urquhart", "9781638931249", 
+                              "A thrilling novel of crime and suspense.", "Hardcover Fiction", 
+                              "https://image1.jpg", "", "2023-05-01", 4.5, "Thriller");
+        
+        Book book2 = new Book("The Science of Interstellar", "Kip Thorne", "9780393351378", 
+                              "Exploring the science behind the movie Interstellar.", "Science", 
+                              "https://image2.jpg", "", "2014-11-07", 4.8, "Science");
+
+        Book book3 = new Book("Educated", "Tara Westover", "9780399590504", 
+                              "A memoir by Tara Westover about growing up in a strict and abusive household.", 
+                              "Biography", "https://image3.jpg", "", "2018-02-20", 4.7, "Memoir");
 
         // Saving the books into the MongoDB collection
         bookRepository.saveAll(Arrays.asList(book1, book2, book3));
