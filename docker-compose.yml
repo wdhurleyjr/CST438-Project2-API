@@ -11,6 +11,7 @@ services:
       - PORT=8080  # Specify the port explicitly
       - MONGODB_URI=mongodb+srv://pemitchell:TThycxG6X78dXSH0@nytbooksdb.5ugif.mongodb.net/BooksDatabase?retryWrites=true&w=majority&appName=NYTBooksDB
       - nyt.api.key=GJULyrhinH6fKxvLBST05RLKgeyxAusr
+      - JWT_SECRET=Y3N0NDM4cHJvamVjdDI=  # Base64 encoded JWT secret key
     ports:
       - "8080:8080"  # Map the application port to the host
     depends_on: []  # No dependencies since we are using Atlas
@@ -19,5 +20,6 @@ services:
 
 networks:
   app-network:
+
 
 
