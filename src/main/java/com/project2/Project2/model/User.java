@@ -1,13 +1,17 @@
 package com.project2.Project2.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 @Document(collection = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     private String id;
@@ -21,11 +25,9 @@ public class User {
     private String email;
 
     private String firstName;
-
     private String lastName;
 
     private List<String> wishlist;
-
     private Set<String> roles;
 
     // Constructors
@@ -113,6 +115,30 @@ public class User {
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
+
+    // Methods required by UserDetails interface
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
-
-
