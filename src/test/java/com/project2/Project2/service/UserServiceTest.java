@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;  // Mock PasswordEncoder
 
     @InjectMocks
     private UserService userService;
@@ -132,14 +136,16 @@ class UserServiceTest {
     void saveUser_ShouldHashPasswordAndReturnSavedUser() {
         // Arrange
         User user = new User("user1", "password1", "user1@example.com", "First1", "Last1");
+        when(passwordEncoder.encode("password1")).thenReturn("hashedPassword");  // Mock password hashing
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         // Act
         User savedUser = userService.saveUser(user);
 
         // Assert
-        assertNotEquals("password1", savedUser.getPassword()); // Ensure the password is hashed
+        assertEquals("hashedPassword", savedUser.getPassword()); // Ensure the password is hashed
         verify(userRepository, times(1)).save(any(User.class));
+        verify(passwordEncoder, times(1)).encode("password1");
     }
 
     @Test
@@ -148,6 +154,7 @@ class UserServiceTest {
         User existingUser = new User("user1", "password1", "user1@example.com", "First1", "Last1");
         User updatedUser = new User("user1", "newpassword", "user1@example.com", "First1", "Last1");
         when(userRepository.findById("1")).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.encode("newpassword")).thenReturn("hashedNewPassword");  // Mock password hashing
         when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
         // Act
@@ -155,7 +162,7 @@ class UserServiceTest {
 
         // Assert
         assertTrue(result.isPresent());
-        assertNotEquals("password1", result.get().getPassword()); // Ensure password is updated
+        assertEquals("hashedNewPassword", result.get().getPassword()); // Ensure password is updated
         verify(userRepository, times(1)).findById("1");
         verify(userRepository, times(1)).save(any(User.class));
     }

@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -30,10 +31,11 @@ public class User implements UserDetails {
     private List<String> wishlist;
     private Set<String> roles;
 
-    // Constructors
+    // Default constructor
     public User() {
     }
 
+    // Constructor with roles
     public User(String username, String password, String email, String firstName, String lastName, Set<String> roles) {
         this.username = username;
         this.password = password;
@@ -41,6 +43,16 @@ public class User implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.roles = roles;
+    }
+
+    // Constructor without roles
+    public User(String username, String password, String email, String firstName, String lastName) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.roles = Set.of();  // Default to an empty set of roles
     }
 
     // Getters and Setters
@@ -100,20 +112,29 @@ public class User implements UserDetails {
         this.wishlist = wishlist;
     }
 
-    public void addToWishlist(String bookId) {
-        this.wishlist.add(bookId);
-    }
-
-    public void removeFromWishlist(String bookId) {
-        this.wishlist.remove(bookId);
-    }
-
     public Set<String> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    // Method to add a book to the wishlist
+    public void addToWishlist(String bookId) {
+        if (this.wishlist != null) {
+            this.wishlist.add(bookId);
+        } else {
+            this.wishlist = new ArrayList<>();
+            this.wishlist.add(bookId);
+        }
+    }
+
+    // Method to remove a book from the wishlist
+    public void removeFromWishlist(String bookId) {
+        if (this.wishlist != null) {
+            this.wishlist.remove(bookId);
+        }
     }
 
     // Methods required by UserDetails interface
