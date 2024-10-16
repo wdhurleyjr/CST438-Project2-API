@@ -10,12 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,13 +37,9 @@ public class AuthController {
         try {
             UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDetails.getUsername(), authRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
-            Set<String> roles = userDetails.getAuthorities()
-                    .stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toSet());
-            String token = jwtService.generateToken(userDetails.getUsername(), roles);
+            String token = jwtService.generateToken(userDetails.getUsername(), userDetails.getAuthorities());
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("Invalid username or password");
@@ -55,13 +51,20 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            user.setRoles(Collections.singleton("ROLE_USER"));
+            List<SimpleGrantedAuthority> authorities =
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+            user.setAuthorities(authorities);
+
             User createdUser = userService.saveUser(user);
-            Set<String> roles = createdUser.getRoles();
-            String token = jwtService.generateToken(createdUser.getUsername(), roles);
+            String token = jwtService.generateToken(
+                    createdUser.getUsername(), createdUser.getAuthorities()
+            );
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while creating the account.");
         }
     }
+
 }
+

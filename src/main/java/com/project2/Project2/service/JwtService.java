@@ -4,24 +4,30 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
 
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    // Generate JWT token with roles as a Set<String>
-    public String generateToken(String username, Set<String> roles) {
+    // Generate JWT token with roles as a collection of GrantedAuthority
+    public String generateToken(String username, Collection<? extends GrantedAuthority> authorities) {
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)  // Convert authorities to role strings
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .setSubject(username)
-                .claim("roles", roles)  // Store roles as Set
+                .claim("roles", roles)  // Store roles as List<String>
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // 10-hour expiration
                 .signWith(SECRET_KEY)
@@ -33,9 +39,12 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extract roles from token as a Set<String>
-    public Set<String> extractRoles(String token) {
-        return extractClaim(token, claims -> claims.get("roles", Set.class));  // Extract roles as Set
+    // Extract roles from token as a list of GrantedAuthority
+    public List<GrantedAuthority> extractRoles(String token) {
+        List<String> roles = extractClaim(token, claims -> claims.get("roles", List.class));  // Extract roles as List<String>
+        return roles.stream()
+                .map(role -> (GrantedAuthority) () -> role)  // Convert each role string to GrantedAuthority
+                .collect(Collectors.toList());
     }
 
     // Validate token
@@ -64,4 +73,5 @@ public class JwtService {
                 .getBody();
     }
 }
+
 

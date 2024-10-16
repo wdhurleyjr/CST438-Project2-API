@@ -4,12 +4,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Document(collection = "users")
 public class User implements UserDetails {
@@ -29,30 +28,26 @@ public class User implements UserDetails {
     private String lastName;
 
     private List<String> wishlist;
-    private Set<String> roles;
+    private List<GrantedAuthority> authorities;  // Store authorities directly
 
     // Default constructor
     public User() {
+        this.authorities = new ArrayList<>();
     }
 
-    // Constructor with roles
-    public User(String username, String password, String email, String firstName, String lastName, Set<String> roles) {
+    // Constructor with authorities
+    public User(String username, String password, String email, String firstName, String lastName, List<GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.roles = roles;
+        this.authorities = authorities;
     }
 
-    // Constructor without roles
+    // Constructor without authorities (defaults to an empty list)
     public User(String username, String password, String email, String firstName, String lastName) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.roles = Set.of();  // Default to an empty set of roles
+        this(username, password, email, firstName, lastName, new ArrayList<>());
     }
 
     // Getters and Setters
@@ -112,35 +107,15 @@ public class User implements UserDetails {
         this.wishlist = wishlist;
     }
 
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    // Method to add a book to the wishlist
-    public void addToWishlist(String bookId) {
-        if (this.wishlist != null) {
-            this.wishlist.add(bookId);
-        } else {
-            this.wishlist = new ArrayList<>();
-            this.wishlist.add(bookId);
-        }
-    }
-
-    // Method to remove a book from the wishlist
-    public void removeFromWishlist(String bookId) {
-        if (this.wishlist != null) {
-            this.wishlist.remove(bookId);
-        }
+    // Set authorities directly (for registration or updates)
+    public void setAuthorities(List<? extends GrantedAuthority> authorities) {
+        this.authorities = new ArrayList<>(authorities);
     }
 
     // Methods required by UserDetails interface
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of();
+        return authorities;
     }
 
     @Override
@@ -162,4 +137,20 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    // Add a book to the wishlist
+    public void addToWishlist(String bookId) {
+        if (this.wishlist == null) {
+            this.wishlist = new ArrayList<>();
+        }
+        this.wishlist.add(bookId);
+    }
+
+    // Remove a book from the wishlist
+    public void removeFromWishlist(String bookId) {
+        if (this.wishlist != null) {
+            this.wishlist.remove(bookId);
+        }
+    }
 }
+
