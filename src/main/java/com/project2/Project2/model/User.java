@@ -4,12 +4,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Document(collection = "users")
 public class User implements UserDetails {
@@ -29,30 +28,22 @@ public class User implements UserDetails {
     private String lastName;
 
     private List<String> wishlist;
-    private Set<String> roles;
+
+    // Store roles as strings in MongoDB
+    private List<String> roles = new ArrayList<>();
 
     // Default constructor
     public User() {
     }
 
-    // Constructor with roles
-    public User(String username, String password, String email, String firstName, String lastName, Set<String> roles) {
+    // Constructor with role strings
+    public User(String username, String password, String email, String firstName, String lastName, List<String> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.roles = roles;
-    }
-
-    // Constructor without roles
-    public User(String username, String password, String email, String firstName, String lastName) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.roles = Set.of();  // Default to an empty set of roles
     }
 
     // Getters and Setters
@@ -112,35 +103,20 @@ public class User implements UserDetails {
         this.wishlist = wishlist;
     }
 
-    public Set<String> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
-    // Method to add a book to the wishlist
-    public void addToWishlist(String bookId) {
-        if (this.wishlist != null) {
-            this.wishlist.add(bookId);
-        } else {
-            this.wishlist = new ArrayList<>();
-            this.wishlist.add(bookId);
-        }
-    }
-
-    // Method to remove a book from the wishlist
-    public void removeFromWishlist(String bookId) {
-        if (this.wishlist != null) {
-            this.wishlist.remove(bookId);
-        }
-    }
-
-    // Methods required by UserDetails interface
+    // Convert roles to GrantedAuthority objects for Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of();
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -162,4 +138,20 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    // Add to wishlist
+    public void addToWishlist(String bookId) {
+        if (this.wishlist == null) {
+            this.wishlist = new ArrayList<>();
+        }
+        this.wishlist.add(bookId);
+    }
+
+    // Remove from wishlist
+    public void removeFromWishlist(String bookId) {
+        if (this.wishlist != null) {
+            this.wishlist.remove(bookId);
+        }
+    }
 }
+
