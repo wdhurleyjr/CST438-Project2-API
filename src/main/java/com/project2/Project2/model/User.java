@@ -28,26 +28,22 @@ public class User implements UserDetails {
     private String lastName;
 
     private List<String> wishlist;
-    private List<GrantedAuthority> authorities;  // Store authorities directly
+
+    // Store roles as strings in MongoDB
+    private List<String> roles = new ArrayList<>();
 
     // Default constructor
     public User() {
-        this.authorities = new ArrayList<>();
     }
 
-    // Constructor with authorities
-    public User(String username, String password, String email, String firstName, String lastName, List<GrantedAuthority> authorities) {
+    // Constructor with role strings
+    public User(String username, String password, String email, String firstName, String lastName, List<String> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.authorities = authorities;
-    }
-
-    // Constructor without authorities (defaults to an empty list)
-    public User(String username, String password, String email, String firstName, String lastName) {
-        this(username, password, email, firstName, lastName, new ArrayList<>());
+        this.roles = roles;
     }
 
     // Getters and Setters
@@ -107,15 +103,20 @@ public class User implements UserDetails {
         this.wishlist = wishlist;
     }
 
-    // Set authorities directly (for registration or updates)
-    public void setAuthorities(List<? extends GrantedAuthority> authorities) {
-        this.authorities = new ArrayList<>(authorities);
+    public List<String> getRoles() {
+        return roles;
     }
 
-    // Methods required by UserDetails interface
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    // Convert roles to GrantedAuthority objects for Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -138,7 +139,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    // Add a book to the wishlist
+    // Add to wishlist
     public void addToWishlist(String bookId) {
         if (this.wishlist == null) {
             this.wishlist = new ArrayList<>();
@@ -146,7 +147,7 @@ public class User implements UserDetails {
         this.wishlist.add(bookId);
     }
 
-    // Remove a book from the wishlist
+    // Remove from wishlist
     public void removeFromWishlist(String bookId) {
         if (this.wishlist != null) {
             this.wishlist.remove(bookId);
