@@ -11,10 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,12 +29,12 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
-        // Convert roles from Set<String> to Collection<? extends GrantedAuthority>
+        // Convert roles from List<String> to Collection<? extends GrantedAuthority>
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        // Return a Spring Security User object with username, password, and roles
+        // Return a Spring Security User object with username, password, and authorities
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
@@ -66,9 +63,9 @@ public class UserService implements UserDetailsService {
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
-        // Set default role if not present
+        // Set default role if roles are missing
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(Set.of("ROLE_USER"));
+            user.setRoles(List.of("ROLE_USER"));
         }
 
         return userRepository.save(user);
@@ -98,7 +95,6 @@ public class UserService implements UserDetailsService {
             return userRepository.save(user);
         });
     }
-
 
     public boolean deleteUserById(String id) {
         if (userRepository.existsById(id)) {
@@ -132,7 +128,9 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> assignRole(String userId, String role) {
         return userRepository.findById(userId).map(user -> {
-            user.getRoles().add(role);
+            if (!user.getRoles().contains(role)) {
+                user.getRoles().add(role);
+            }
             return userRepository.save(user);
         });
     }
@@ -144,8 +142,9 @@ public class UserService implements UserDetailsService {
         });
     }
 
-    public Optional<Set<String>> getUserRoles(String userId) {
+    public Optional<List<String>> getUserRoles(String userId) {
         return userRepository.findById(userId).map(User::getRoles);
     }
 }
+
 

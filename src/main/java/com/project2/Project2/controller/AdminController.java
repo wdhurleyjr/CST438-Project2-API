@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -32,14 +31,26 @@ public class AdminController {
     }
 
     @PutMapping("/{id}/roles")
-    public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody String roles) {
-        Optional<User> updatedUser = userService.assignRole(id, roles);
+    public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody List<String> roles) {
+        // Assign multiple roles by looping over the list
+        Optional<User> updatedUser = roles.stream()
+                .map(role -> userService.assignRole(id, role))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
+
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}/roles")
-    public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody String roles) {
-        Optional<User> updatedUser = userService.removeRole(id, roles);
+    public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody List<String> roles) {
+        // Remove multiple roles by looping over the list
+        Optional<User> updatedUser = roles.stream()
+                .map(role -> userService.removeRole(id, role))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
+
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -50,8 +61,8 @@ public class AdminController {
     }
 
     @GetMapping("/{id}/roles")
-    public ResponseEntity<Set<String>> getUserRoles(@PathVariable String id) {
-        Optional<Set<String>> roles = userService.getUserRoles(id);
+    public ResponseEntity<List<String>> getUserRoles(@PathVariable String id) {
+        Optional<List<String>> roles = userService.getUserRoles(id).map(List::copyOf);
         return roles.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
