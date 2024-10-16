@@ -10,11 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,11 +47,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            List<SimpleGrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-
-            user.setAuthorities(authorities);
-
+            user.setRoles(Collections.singletonList("ROLE_USER"));  // Use setRoles()
             User createdUser = userService.saveUser(user);
             String token = jwtService.generateToken(
                     createdUser.getUsername(), createdUser.getAuthorities()
@@ -63,6 +57,5 @@ public class AuthController {
             return ResponseEntity.status(500).body("An error occurred while creating the account.");
         }
     }
-
 }
 
