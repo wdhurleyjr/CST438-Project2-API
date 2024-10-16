@@ -76,18 +76,29 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> updateUser(String id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
-            // Hash the updated password, if present
-            if (updatedUser.getPassword() != null) {
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
                 String hashedPassword = passwordEncoder.encode(updatedUser.getPassword());
                 user.setPassword(hashedPassword);
             }
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-            user.setFirstName(updatedUser.getFirstName());
-            user.setLastName(updatedUser.getLastName());
+            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
+                user.setUsername(updatedUser.getUsername());
+            }
+            if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
+                user.setEmail(updatedUser.getEmail());
+            }
+            if (updatedUser.getFirstName() != null && !updatedUser.getFirstName().isEmpty()) {
+                user.setFirstName(updatedUser.getFirstName());
+            }
+            if (updatedUser.getLastName() != null && !updatedUser.getLastName().isEmpty()) {
+                user.setLastName(updatedUser.getLastName());
+            }
+            if (updatedUser.getRoles() != null && !updatedUser.getRoles().isEmpty()) {
+                user.setRoles(updatedUser.getRoles());
+            }
             return userRepository.save(user);
         });
     }
+
 
     public boolean deleteUserById(String id) {
         if (userRepository.existsById(id)) {
