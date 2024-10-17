@@ -36,7 +36,7 @@ class UserServiceTest {
     @Test
     void findUserByUsername_ShouldReturnUser_WhenFound() {
         // Arrange
-        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1");
+        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
         when(userRepository.findByUsername("user1")).thenReturn(Optional.of(user));
 
         // Act
@@ -64,7 +64,7 @@ class UserServiceTest {
     @Test
     void findUserByEmail_ShouldReturnUser_WhenFound() {
         // Arrange
-        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1");
+        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
         when(userRepository.findByEmail("user1@example.com")).thenReturn(Optional.of(user));
 
         // Act
@@ -92,8 +92,8 @@ class UserServiceTest {
     @Test
     void getAllUsers_ShouldReturnListOfUsers() {
         // Arrange
-        User user1 = new User("user1", "password1", "user1@example.com", "First1", "Last1");
-        User user2 = new User("user2", "password2", "user2@example.com", "First2", "Last2");
+        User user1 = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
+        User user2 = new User("user2", "password2", "user2@example.com", "First2", "Last2", List.of("ROLE_ADMIN"));
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
         // Act
@@ -107,7 +107,7 @@ class UserServiceTest {
     @Test
     void getUserById_ShouldReturnUser_WhenFound() {
         // Arrange
-        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1");
+        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
         when(userRepository.findById("1")).thenReturn(Optional.of(user));
 
         // Act
@@ -135,7 +135,7 @@ class UserServiceTest {
     @Test
     void saveUser_ShouldHashPasswordAndReturnSavedUser() {
         // Arrange
-        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1");
+        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
         when(passwordEncoder.encode("password1")).thenReturn("hashedPassword");  // Mock password hashing
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -151,8 +151,8 @@ class UserServiceTest {
     @Test
     void updateUser_ShouldUpdateExistingUser_WhenFound() {
         // Arrange
-        User existingUser = new User("user1", "password1", "user1@example.com", "First1", "Last1");
-        User updatedUser = new User("user1", "newpassword", "user1@example.com", "First1", "Last1");
+        User existingUser = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
+        User updatedUser = new User("user1", "newpassword", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
         when(userRepository.findById("1")).thenReturn(Optional.of(existingUser));
         when(passwordEncoder.encode("newpassword")).thenReturn("hashedNewPassword");  // Mock password hashing
         when(userRepository.save(any(User.class))).thenReturn(existingUser);

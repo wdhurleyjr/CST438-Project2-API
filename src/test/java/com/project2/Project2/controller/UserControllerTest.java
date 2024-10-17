@@ -9,15 +9,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserControllerTest {
@@ -34,29 +31,9 @@ class UserControllerTest {
     }
 
     @Test
-    void getAllUsers_ShouldReturnListOfUsers() {
+    void findUserById_ShouldReturnUser_WhenUserExists() {
         // Arrange
-        Set<String> roles = new HashSet<>();
-        roles.add("ROLE_USER");
-        User user1 = new User("user1", "password1", "user1@example.com", "First1", "Last1", roles);
-        User user2 = new User("user2", "password2", "user2@example.com", "First2", "Last2", roles);
-        when(userService.getAllUsers()).thenReturn(Arrays.asList(user1, user2));
-
-        // Act
-        ResponseEntity<List<User>> response = userController.getAllUsers();
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
-        verify(userService, times(1)).getAllUsers();
-    }
-
-    @Test
-    void findUserById_ShouldReturnUser_WhenFound() {
-        // Arrange
-        Set<String> roles = new HashSet<>();
-        roles.add("ROLE_USER");
-        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1", roles);
+        User user = new User("user1", "password", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
         when(userService.getUserById("1")).thenReturn(Optional.of(user));
 
         // Act
@@ -82,29 +59,10 @@ class UserControllerTest {
     }
 
     @Test
-    void saveUser_ShouldReturnCreatedUser() {
+    void updateUser_ShouldReturnUpdatedUser_WhenUserExists() {
         // Arrange
-        Set<String> roles = new HashSet<>();
-        roles.add("ROLE_USER");
-        User user = new User("user1", "password1", "user1@example.com", "First1", "Last1", roles);
-        when(userService.saveUser(any(User.class))).thenReturn(user);
-
-        // Act
-        ResponseEntity<User> response = userController.saveUser(user);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(user, response.getBody());
-        verify(userService, times(1)).saveUser(any(User.class));
-    }
-
-    @Test
-    void updateUser_ShouldReturnUpdatedUser_WhenFound() {
-        // Arrange
-        Set<String> roles = new HashSet<>();
-        roles.add("ROLE_USER");
-        User updatedUser = new User("user1", "updatedPassword", "user1@example.com", "First1", "Last1", roles);
-        when(userService.updateUser(eq("1"), any(User.class))).thenReturn(Optional.of(updatedUser));
+        User updatedUser = new User("user1", "newPassword", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
+        when(userService.updateUser("1", updatedUser)).thenReturn(Optional.of(updatedUser));
 
         // Act
         ResponseEntity<User> response = userController.updateUser("1", updatedUser);
@@ -112,24 +70,25 @@ class UserControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatedUser, response.getBody());
-        verify(userService, times(1)).updateUser(eq("1"), any(User.class));
+        verify(userService, times(1)).updateUser("1", updatedUser);
     }
 
     @Test
     void updateUser_ShouldReturnNotFound_WhenUserDoesNotExist() {
         // Arrange
-        when(userService.updateUser(eq("1"), any(User.class))).thenReturn(Optional.empty());
+        User updatedUser = new User("user1", "newPassword", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
+        when(userService.updateUser("1", updatedUser)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<User> response = userController.updateUser("1", new User());
+        ResponseEntity<User> response = userController.updateUser("1", updatedUser);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(userService, times(1)).updateUser(eq("1"), any(User.class));
+        verify(userService, times(1)).updateUser("1", updatedUser);
     }
 
     @Test
-    void deleteUserById_ShouldReturnNoContent_WhenUserIsDeleted() {
+    void deleteUserById_ShouldReturnNoContent_WhenUserExists() {
         // Arrange
         when(userService.deleteUserById("1")).thenReturn(true);
 
@@ -153,4 +112,92 @@ class UserControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(userService, times(1)).deleteUserById("1");
     }
+
+    @Test
+    void addBookToWishlist_ShouldReturnUpdatedUser_WhenSuccessful() {
+        // Arrange
+        User user = new User("user1", "password", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
+        user.addToWishlist("book1");
+        when(userService.addBookToWishlist("1", "book1")).thenReturn(Optional.of(user));
+
+        // Act
+        ResponseEntity<User> response = userController.addBookToWishlist("1", "book1");
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(user, response.getBody());
+        verify(userService, times(1)).addBookToWishlist("1", "book1");
+    }
+
+    @Test
+    void addBookToWishlist_ShouldReturnNotFound_WhenUserDoesNotExist() {
+        // Arrange
+        when(userService.addBookToWishlist("1", "book1")).thenReturn(Optional.empty());
+
+        // Act
+        ResponseEntity<User> response = userController.addBookToWishlist("1", "book1");
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(userService, times(1)).addBookToWishlist("1", "book1");
+    }
+
+    @Test
+    void removeBookFromWishlist_ShouldReturnUpdatedUser_WhenSuccessful() {
+        // Arrange
+        User user = new User("user1", "password", "user1@example.com", "First1", "Last1", List.of("ROLE_USER"));
+        user.addToWishlist("book1");
+        user.removeFromWishlist("book1");
+        when(userService.removeBookFromWishlist("1", "book1")).thenReturn(Optional.of(user));
+
+        // Act
+        ResponseEntity<User> response = userController.removeBookFromWishlist("1", "book1");
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(user, response.getBody());
+        verify(userService, times(1)).removeBookFromWishlist("1", "book1");
+    }
+
+    @Test
+    void removeBookFromWishlist_ShouldReturnNotFound_WhenUserDoesNotExist() {
+        // Arrange
+        when(userService.removeBookFromWishlist("1", "book1")).thenReturn(Optional.empty());
+
+        // Act
+        ResponseEntity<User> response = userController.removeBookFromWishlist("1", "book1");
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(userService, times(1)).removeBookFromWishlist("1", "book1");
+    }
+
+    @Test
+    void getUserWishlist_ShouldReturnWishlist_WhenSuccessful() {
+        // Arrange
+        List<String> wishlist = List.of("book1", "book2");
+        when(userService.getUserWishlist("1")).thenReturn(Optional.of(wishlist));
+
+        // Act
+        ResponseEntity<List<String>> response = userController.getUserWishlist("1");
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(wishlist, response.getBody());
+        verify(userService, times(1)).getUserWishlist("1");
+    }
+
+    @Test
+    void getUserWishlist_ShouldReturnNotFound_WhenUserDoesNotExist() {
+        // Arrange
+        when(userService.getUserWishlist("1")).thenReturn(Optional.empty());
+
+        // Act
+        ResponseEntity<List<String>> response = userController.getUserWishlist("1");
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(userService, times(1)).getUserWishlist("1");
+    }
 }
+
