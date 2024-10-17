@@ -13,11 +13,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,15 +52,17 @@ class AuthControllerTest {
         AuthRequest authRequest = new AuthRequest("testUser", "password");
         UserDetails userDetails = mock(UserDetails.class);
 
-        // Mock the behavior for userService and jwtService
+        // Mock user details
         when(userService.loadUserByUsername("testUser")).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn("testUser");
-        when(userDetails.getAuthorities()).thenReturn(Collections.emptySet());
-        when(jwtService.generateToken("testUser", Collections.emptySet())).thenReturn("mockToken");
+        when(userDetails.getAuthorities()).thenReturn(Collections.emptyList());
 
-        // Mock successful authentication
+        // Mock JWT token generation
+        when(jwtService.generateToken("testUser", Collections.emptyList())).thenReturn("mockToken");
+
+        // Simulate successful authentication
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(null);  // Return null to simulate a successful authentication
+                .thenReturn(null);
 
         // Act
         ResponseEntity<?> response = authController.login(authRequest);
@@ -70,16 +74,12 @@ class AuthControllerTest {
         assertEquals("mockToken", actualResponse.getToken());
     }
 
-
     @Test
     void testLogin_InvalidCredentials() {
         // Arrange
         AuthRequest authRequest = new AuthRequest("testUser", "wrongPassword");
-        UserDetails userDetails = mock(UserDetails.class);
 
-        when(userService.loadUserByUsername("testUser")).thenReturn(userDetails);
-
-        // Simulate authentication failure by throwing an exception
+        // Simulate failed authentication by throwing an exception
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new AuthenticationException("Invalid credentials") {});
 
@@ -91,13 +91,12 @@ class AuthControllerTest {
         assertEquals("Invalid username or password", response.getBody());
     }
 
-
     @Test
     void testLogin_InternalServerError() {
         // Arrange
         AuthRequest authRequest = new AuthRequest("testUser", "password");
 
-        // Simulate internal server error
+        // Simulate an internal server error
         when(userService.loadUserByUsername("testUser")).thenThrow(RuntimeException.class);
 
         // Act
@@ -114,33 +113,39 @@ class AuthControllerTest {
         User user = new User();
         user.setUsername("newUser");
 
-        User savedUser = new User();
-        savedUser.setUsername("newUser");
-        savedUser.setRoles(Collections.singleton("ROLE_USER"));
+        User savedUser = mock(User.class);
+        when(savedUser.getUsername()).thenReturn("newUser");
 
-        // Mock user saving and token generation
+        // Create a Collection without explicit type parameters
+        Collection authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+
+        // Mock the behavior without strict type enforcement
+        when(savedUser.getAuthorities()).thenReturn(authorities);
         when(userService.saveUser(user)).thenReturn(savedUser);
-        when(jwtService.generateToken("newUser", savedUser.getRoles())).thenReturn("mockToken");
+        when(jwtService.generateToken("newUser", authorities)).thenReturn("mockToken");
 
         // Act
         ResponseEntity<?> response = authController.register(user);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        // Validate the response body
-        assertNotNull(response.getBody(), "Response body should not be null");
         AuthResponse actualResponse = (AuthResponse) response.getBody();
-        assertEquals("mockToken", actualResponse.getToken(), "Tokens should match");
+        assertNotNull(actualResponse, "Response body should not be null");
+        assertEquals("mockToken", actualResponse.getToken(), "Token should match expected value");
     }
+
+
+
+
+
 
     @Test
     void testRegister_Failure() {
         // Arrange
         User user = new User();
 
-        // Simulate failure during user saving
-        when(userService.saveUser(user)).thenThrow(new AuthenticationServiceException("Error"));
+        // Simulate an exception when saving the user
+        when(userService.saveUser(user)).thenThrow(new RuntimeException("Database error"));
 
         // Act
         ResponseEntity<?> response = authController.register(user);
@@ -150,4 +155,3 @@ class AuthControllerTest {
         assertEquals("An error occurred while creating the account.", response.getBody());
     }
 }
-
