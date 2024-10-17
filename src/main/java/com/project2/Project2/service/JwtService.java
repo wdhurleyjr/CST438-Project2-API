@@ -68,6 +68,7 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .setAllowedClockSkewSeconds(2)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
