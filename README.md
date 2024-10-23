@@ -19,7 +19,6 @@ Our team has developed a RESTful API using **Spring Boot** to handle various fun
 3. **Book Management**
    - **CRUD Operations:** Provides endpoints for creating, reading, updating, and deleting books.
    - **Search and Filtering:** Supports searching books by title and filtering by genre.
-   - **User Reviews and Ratings:** Allows users to leave reviews and ratings for books.
 
 4. **Security**
    - **JWT-based Authentication:** Secures API endpoints to prevent unauthorized access.
