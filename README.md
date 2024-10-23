@@ -127,7 +127,7 @@ This ERD models the entire system, including external interactions:
   - **Users** interact with the frontend for browsing, searching, and saving books.
   - **API** interactions fetch the necessary data to populate the application.
  
-  - ![image](https://github.com/user-attachments/assets/dcb594b4-c87c-487e-880b-5e2fb8a8df0f
+  - ![image](https://github.com/user-attachments/assets/dcb594b4-c87c-487e-880b-5e2fb8a8df0f)
 
 ---
 
@@ -135,7 +135,7 @@ This ERD models the entire system, including external interactions:
 
 Our API is documented and tested using **Postman**. Postman collections help developers explore the available endpoints and interact with the backend.
 
-- **Postman Collection URL**: [Postman Collection](https://your-api-postman-url)
+- **Postman Collection URL**: [Postman Collection](https://project2-0362.postman.co/workspace/0e7a49e3-e745-4814-8df3-7da2bbc01a81)
 - Use the collection to view endpoints, parameters, and test requests in real-time.
 
 ---
