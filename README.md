@@ -1,4 +1,46 @@
-## Project 2
+# Project 2
+
+## Overview of the API
+
+Our team has developed a RESTful API using **Spring Boot** to handle various functionalities, including authentication, user management, and book operations. This API serves as the backend for both the web and mobile platforms, ensuring smooth interaction between the front end and the database.
+
+### API Features
+
+1. **Authentication and Authorization**
+   - **JWT Authentication:** Uses JSON Web Tokens (JWT) to manage secure user sessions.
+   - **Login Endpoint:** Authenticates users and issues JWT tokens upon successful login.
+   - **Role-based Access Control:** Provides access restrictions based on user roles (Admin, User).
+
+2. **User Management**
+   - **Admin Privileges:** Admins can create, update, and delete user records.
+   - **User Registration:** Allows users to register with their email and password.
+   - **Password Encryption:** Uses **BCrypt** for secure password hashing.
+
+3. **Book Management**
+   - **CRUD Operations:** Provides endpoints for creating, reading, updating, and deleting books.
+   - **Search and Filtering:** Supports searching books by title and filtering by genre.
+   - **User Reviews and Ratings:** Allows users to leave reviews and ratings for books.
+
+4. **Security**
+   - **JWT-based Authentication:** Secures API endpoints to prevent unauthorized access.
+   - **Spring Security Integration:** Configured for role-based access and authentication filtering.
+
+5. **API Documentation**
+   - **Postman:** Testing of API endpoints through Postman.
+
+---
+
+## Technologies Used
+
+- **Spring Boot**: Backend framework
+- **MongoDB**: Database for persisting data
+- **JWT**: For secure authentication
+- **BCrypt**: For password encryption
+- **JUnit & Mockito**: For unit and integration testing
+- **Docker**: For containerizing the application
+- **Heroku**: For cloud deployment
+
+---
 
 ## Entity-Relationship Diagrams (ERDs) for the Application
 
@@ -86,7 +128,61 @@ This ERD models the entire system, including external interactions:
   - **Users** interact with the frontend for browsing, searching, and saving books.
   - **API** interactions fetch the necessary data to populate the application.
  
-  - ![image](https://github.com/user-attachments/assets/dcb594b4-c87c-487e-880b-5e2fb8a8df0f)
+  - ![image](https://github.com/user-attachments/assets/dcb594b4-c87c-487e-880b-5e2fb8a8df0f
+
+---
+
+## API Documentation
+
+Our API is documented and tested using **Postman**. Postman collections help developers explore the available endpoints and interact with the backend.
+
+- **Postman Collection URL**: [Postman Collection](https://your-api-postman-url)
+- Use the collection to view endpoints, parameters, and test requests in real-time.
+
+---
+
+## Testing Strategy
+
+Our testing strategy ensures code quality and proper functionality through the following:
+
+1. **Unit Testing**:
+   - Each service class is thoroughly tested with **JUnit** to ensure expected behavior.
+   - **Mockito** is used to mock dependencies, isolating the components being tested.
+
+2. **Integration Testing**:
+   - Integration tests ensure that the system components work well together.
+   - Database interactions are validated by simulating real-world scenarios.
+
+3. **End-to-End Testing**:
+   - Postman tests validate the entire workflow, from API calls to database updates.
+   - These tests ensure that the API functions as expected when deployed.
+
+---
+
+## Deployment
+
+We have containerized the API using **Docker** to ensure consistency across different environments. The application is deployed to **Heroku**, allowing scalable and reliable cloud hosting.
+
+- **Docker**: Containerizes the application for portability and reproducibility.
+- **Heroku**: Hosts the API, ensuring high availability and scalability.
+
+---
+
+## Contribution Guidelines
+
+We follow standard practices to maintain code quality and collaboration within the team.
+
+1. **Branching Strategy**:
+   - Use the `main` branch for production-ready code.
+   - Feature branches should follow the naming convention `feature/feature-name`.
+
+2. **Code Reviews**:
+   - All pull requests must be reviewed and approved by at least two other team member.
+
+3. **Commit Messages**:
+   - Follow the convention: `feat:` and `fix:`, to indicate the purpose of each commit.
+
+---
 
 
 
