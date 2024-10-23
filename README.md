@@ -2,7 +2,7 @@
 
 ## Overview of the API
 
-Our team has developed a RESTful API using **Spring Boot** to handle various functionalities, including authentication, user management, and book operations. This API serves as the backend for both the web and mobile platforms, ensuring smooth interaction between the front end and the database.
+Our team has developed a RESTful API using **Spring Boot** to handle various functionalities, including authentication, user management, and book operations. This API serves as the backend for mobile platform, ensuring smooth interaction between the front end and the database.
 
 ### API Features
 
