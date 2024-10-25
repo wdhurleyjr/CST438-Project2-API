@@ -178,9 +178,6 @@ We follow standard practices to maintain code quality and collaboration within t
 2. **Code Reviews**:
    - All pull requests must be reviewed and approved by at least two other team member.
 
-3. **Commit Messages**:
-   - Follow the convention: `feat:` and `fix:`, to indicate the purpose of each commit.
-
 ---
 
 
