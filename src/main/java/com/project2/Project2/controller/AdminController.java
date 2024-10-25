@@ -30,29 +30,21 @@ public class AdminController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}/roles")
-    public ResponseEntity<User> assignRolesToUser(@PathVariable String id, @RequestBody List<String> roles) {
-        // Assign multiple roles by looping over the list
-        Optional<User> updatedUser = roles.stream()
-                .map(role -> userService.assignRole(id, role))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst();
-
-        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/{id}/{role}")
+    public ResponseEntity<User> assignRoleToUser(@PathVariable String id, @PathVariable String role) {
+        return userService.assignRole(id, role)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}/roles")
-    public ResponseEntity<User> removeRolesFromUser(@PathVariable String id, @RequestBody List<String> roles) {
-        // Remove multiple roles by looping over the list
-        Optional<User> updatedUser = roles.stream()
-                .map(role -> userService.removeRole(id, role))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst();
 
-        return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @DeleteMapping("/{id}/{role}")
+    public ResponseEntity<User> removeRoleFromUser(@PathVariable String id, @PathVariable String role) {
+        return userService.removeRole(id, role)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
