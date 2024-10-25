@@ -24,7 +24,13 @@ public class RootController {
                 "   - GET: /api/books (Retrieve all books)\n" +
                 "   - GET: /api/books/populate (Populate books in the database)\n" +
                 "   - GET: /api/books/search?title=&author=&isbn= (Search for books by title, author, or ISBN)\n" +
+                "- Admin: /api/admin\n" +
+                "   - PUT: /api/admin/{id}/{role} (Assign role to user)\n" +
+                "   - DELETE: /api/admin/{id}/{role} (Remove role from user)\n" +
+                "   - GET: /api/admin/users (Retrieve all users - Admin view)\n" +
+                "   - GET: /api/admin/{id}/roles (Get user roles)\n" +
                 "Please refer to the documentation for more details.";
     }
 }
+
 
