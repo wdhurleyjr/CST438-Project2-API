@@ -88,13 +88,14 @@ class AdminControllerTest {
     }
 
     @Test
-    void assignRolesToUser_ShouldReturnUpdatedUser_WhenSuccessful() {
+    void assignRoleToUser_ShouldReturnUpdatedUser_WhenSuccessful() {
         // Arrange
-        User updatedUser = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of("ROLE_ADMIN"));
+        User updatedUser = new User("user1", "password1", "user1@example.com",
+                "First1", "Last1", List.of("ROLE_ADMIN"));
         when(userService.assignRole("1", "ROLE_ADMIN")).thenReturn(Optional.of(updatedUser));
 
         // Act
-        ResponseEntity<User> response = adminController.assignRolesToUser("1", List.of("ROLE_ADMIN"));
+        ResponseEntity<User> response = adminController.assignRoleToUser("1", "ROLE_ADMIN");
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -103,12 +104,12 @@ class AdminControllerTest {
     }
 
     @Test
-    void assignRolesToUser_ShouldReturnNotFound_WhenUserDoesNotExist() {
+    void assignRoleToUser_ShouldReturnNotFound_WhenUserDoesNotExist() {
         // Arrange
         when(userService.assignRole("1", "ROLE_ADMIN")).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<User> response = adminController.assignRolesToUser("1", List.of("ROLE_ADMIN"));
+        ResponseEntity<User> response = adminController.assignRoleToUser("1", "ROLE_ADMIN");
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -116,13 +117,14 @@ class AdminControllerTest {
     }
 
     @Test
-    void removeRolesFromUser_ShouldReturnUpdatedUser_WhenSuccessful() {
+    void removeRoleFromUser_ShouldReturnUpdatedUser_WhenSuccessful() {
         // Arrange
-        User updatedUser = new User("user1", "password1", "user1@example.com", "First1", "Last1", List.of());
+        User updatedUser = new User("user1", "password1", "user1@example.com",
+                "First1", "Last1", List.of());
         when(userService.removeRole("1", "ROLE_USER")).thenReturn(Optional.of(updatedUser));
 
         // Act
-        ResponseEntity<User> response = adminController.removeRolesFromUser("1", List.of("ROLE_USER"));
+        ResponseEntity<User> response = adminController.removeRoleFromUser("1", "ROLE_USER");
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -131,17 +133,18 @@ class AdminControllerTest {
     }
 
     @Test
-    void removeRolesFromUser_ShouldReturnNotFound_WhenUserDoesNotExist() {
+    void removeRoleFromUser_ShouldReturnNotFound_WhenUserDoesNotExist() {
         // Arrange
         when(userService.removeRole("1", "ROLE_USER")).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<User> response = adminController.removeRolesFromUser("1", List.of("ROLE_USER"));
+        ResponseEntity<User> response = adminController.removeRoleFromUser("1", "ROLE_USER");
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(userService, times(1)).removeRole("1", "ROLE_USER");
     }
+
 
     @Test
     void getAllUsers_ShouldReturnListOfUsers() {
