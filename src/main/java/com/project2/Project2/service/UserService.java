@@ -1,6 +1,8 @@
 package com.project2.Project2.service;
 
+import com.project2.Project2.model.Book;
 import com.project2.Project2.model.User;
+import com.project2.Project2.repository.BookRepository;
 import com.project2.Project2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +21,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BookService bookService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -108,22 +113,26 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
-    public Optional<User> addBookToWishlist(String userId, String bookId) {
-        return userRepository.findById(userId).map(user -> {
-            user.addToWishlist(bookId);
+    public Optional<User> addBookToWishlist(String username, String bookId) {
+        Optional<Book> book = bookService.getBookById(bookId);
+        if (book.isEmpty()) {
+            return Optional.empty();
+        }
+        return userRepository.findByUsername(username).map(user -> {
+            user.addToWishlist(book.get());
             return userRepository.save(user);
         });
     }
 
-    public Optional<User> removeBookFromWishlist(String userId, String bookId) {
-        return userRepository.findById(userId).map(user -> {
-            user.removeFromWishlist(bookId);
+    public Optional<User> removeBookFromWishlist(String username, String bookId) {
+        return userRepository.findByUsername(username).map(user -> {
+            user.getWishlist().removeIf(book -> book.getId().equals(bookId));
             return userRepository.save(user);
         });
     }
 
-    public Optional<List<String>> getUserWishlist(String userId) {
-        return userRepository.findById(userId).map(User::getWishlist);
+    public Optional<List<Book>> getUserWishlist(String username) {
+        return userRepository.findByUsername(username).map(User::getWishlist);
     }
 
     public Optional<User> assignRole(String userId, String role) {
