@@ -1,5 +1,6 @@
 package com.project2.Project2.controller;
 
+import com.project2.Project2.model.Book;
 import com.project2.Project2.model.User;
 import com.project2.Project2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<String> findUserIdByUsername(@PathVariable String username) {
+        Optional<User> user = userService.findUserByUsername(username);
+        return user.map(u -> ResponseEntity.ok(u.getId())).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findUserById(@PathVariable String id) {
@@ -34,21 +41,21 @@ public class UserController {
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/{id}/wishlist/{bookId}")
-    public ResponseEntity<User> addBookToWishlist(@PathVariable String id, @PathVariable String bookId) {
-        Optional<User> updatedUser = userService.addBookToWishlist(id, bookId);
+    @PostMapping("/{username}/wishlist/{bookId}")
+    public ResponseEntity<User> addBookToWishlist(@PathVariable String username, @PathVariable String bookId) {
+        Optional<User> updatedUser = userService.addBookToWishlist(username, bookId);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}/wishlist/{bookId}")
-    public ResponseEntity<User> removeBookFromWishlist(@PathVariable String id, @PathVariable String bookId) {
-        Optional<User> updatedUser = userService.removeBookFromWishlist(id, bookId);
+    @DeleteMapping("/{username}/wishlist/{bookId}")
+    public ResponseEntity<User> removeBookFromWishlist(@PathVariable String username, @PathVariable String bookId) {
+        Optional<User> updatedUser = userService.removeBookFromWishlist(username, bookId);
         return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{id}/wishlist")
-    public ResponseEntity<List<String>> getUserWishlist(@PathVariable String id) {
-        Optional<List<String>> wishlist = userService.getUserWishlist(id);
+    @GetMapping("/{username}/wishlist")
+    public ResponseEntity<List<Book>> getUserWishlist(@PathVariable String username) {
+        Optional<List<Book>> wishlist = userService.getUserWishlist(username);
         return wishlist.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

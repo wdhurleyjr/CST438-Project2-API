@@ -27,14 +27,12 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
 
-    private List<String> wishlist;
+    private List<Book> wishlist = new ArrayList<>();
 
-    // Store roles as strings in MongoDB
     private List<String> roles = new ArrayList<>();
 
     // Default constructor
-    public User() {
-    }
+    public User() {}
 
     // Constructor with role strings
     public User(String username, String password, String email, String firstName, String lastName, List<String> roles) {
@@ -95,11 +93,11 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public List<String> getWishlist() {
+    public List<Book> getWishlist() {
         return wishlist;
     }
 
-    public void setWishlist(List<String> wishlist) {
+    public void setWishlist(List<Book> wishlist) {
         this.wishlist = wishlist;
     }
 
@@ -139,19 +137,16 @@ public class User implements UserDetails {
         return true;
     }
 
-    // Add to wishlist
-    public void addToWishlist(String bookId) {
+    public void addToWishlist(Book book) {
         if (this.wishlist == null) {
             this.wishlist = new ArrayList<>();
         }
-        this.wishlist.add(bookId);
+        this.wishlist.add(book);
     }
 
-    // Remove from wishlist
     public void removeFromWishlist(String bookId) {
         if (this.wishlist != null) {
-            this.wishlist.remove(bookId);
+            this.wishlist.removeIf(book -> book.getId().equals(bookId));
         }
     }
 }
-

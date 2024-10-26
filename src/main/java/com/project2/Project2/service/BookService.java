@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -22,6 +23,16 @@ public class BookService {
      */
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    /**
+     * Retrieve a book by its ID.
+     *
+     * @param bookId The ID of the book to retrieve.
+     * @return An Optional containing the Book if found, or an empty Optional if not found.
+     */
+    public Optional<Book> getBookById(String bookId) {
+        return bookRepository.findById(bookId);
     }
 
     /**

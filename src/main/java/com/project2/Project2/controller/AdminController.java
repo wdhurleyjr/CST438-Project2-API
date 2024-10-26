@@ -45,7 +45,6 @@ public class AdminController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
