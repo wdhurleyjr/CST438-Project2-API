@@ -4,11 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,6 +34,11 @@ class RootControllerTest {
                 "   - GET: /api/books (Retrieve all books)\n" +
                 "   - GET: /api/books/populate (Populate books in the database)\n" +
                 "   - GET: /api/books/search?title=&author=&isbn= (Search for books by title, author, or ISBN)\n" +
+                "- Admin: /api/admin\n" +
+                "   - PUT: /api/admin/{id}/{role} (Assign role to user)\n" +
+                "   - DELETE: /api/admin/{id}/{role} (Remove role from user)\n" +
+                "   - GET: /api/admin/users (Retrieve all users - Admin view)\n" +
+                "   - GET: /api/admin/{id}/roles (Get user roles)\n" +
                 "Please refer to the documentation for more details.";
         
         String actualMessage = rootController.home();
